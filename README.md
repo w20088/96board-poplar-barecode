@@ -10,6 +10,13 @@ led_on_c branch演示用c程序点亮板上的6个LED灯，并使其闪烁
 
 uart branch演示用c语言接收和发送串口输入和输出
 
+编译工具：
+wget https://releases.linaro.org/components/toolchain/binaries/7.1-2017.08/arm-linux-gnueabi/gcc-linaro-7.1.1-2017.08-x86_64_arm-linux-gnueabi.tar.xz
+
+编译方法：make
+运行方法：将fastboot.bin拷贝到U盘根目录，按住USB_BOOT键后上电程序就运行了。
+
+
 1.	启动模式
 
 芯片上电后，就执行复位后，CPU跳转到CPU内部的BOOTROM去执行。BOOTROM检测到USB_BOOT引脚是低电平时就从USB口读取fastboot.bin文件来启动系统；否则，系统将读取eMMC uboot分区到DDR内存后启动系统。
