@@ -5,9 +5,10 @@ poplar单板是基于华为Hi2798CV200CPU设计的机顶盒开发主板，可以
 https://item.taobao.com/item.htm?spm=a1z10.1-c.w13619360-16022635001.8.77020cc8Q0MXAG&id=537581702687
 
 led_on branch演示用汇编程序点亮D16灯
-led_on_c branch演示用c程序点亮板上的6个LED灯，并使其闪烁
-uart branch演示用c语言接收和发送串口输入和输出
 
+led_on_c branch演示用c程序点亮板上的6个LED灯，并使其闪烁
+
+uart branch演示用c语言接收和发送串口输入和输出
 
 1.	启动模式
 
