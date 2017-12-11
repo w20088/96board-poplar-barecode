@@ -1,4 +1,4 @@
-﻿
+
 #define STACK_TOP               0xFFFF0C00
 #define CONFIG_BOOTHEAD_GAP     0x1000
 #define CONFIG_GPIO_LIGHT_SET   0x29 @@@gpio5-1 5*8+1=0x29

@@ -1,4 +1,4 @@
-﻿#define PL011_CLOCK                     75000000
+#define PL011_CLOCK                     75000000
 #define REG_BASE_UART0                  0xF8B00000
 #define baudRate                        115200
 

@@ -1,4 +1,4 @@
-﻿#include "serial_pl01x.h"
+#include "serial_pl01x.h"
 
 #define IO_WRITE(addr, val) (*(volatile unsigned int *)(addr) = (val))
 #define IO_READ(addr) (*(volatile unsigned int *)(addr))

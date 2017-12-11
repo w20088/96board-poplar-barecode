@@ -4,10 +4,13 @@ AR      = arm-histbv310-linux-ar
 OBJCOPY = arm-histbv310-linux-objcopy
 OBJDUMP = arm-histbv310-linux-objdump
 
-CFLAGS 		:= -Wall -O2
+CFLAGS 		:= -Wall -O2 -Iinclude
 CPPFLAGS   	:= -nostdinc -nostdlib -fno-builtin
 
-objs := start.o tail.o serial_pl01x.o main.o
+objs := start.o \
+        src/serial_pl01x.o \
+        src/main.o \
+        tail.o
 
 fastboot.bin: $(objs)
 	${LD} -Tfastboot.lds -o fastboot.elf $^
@@ -22,4 +25,5 @@ fastboot.bin: $(objs)
 
 clean:
 	rm -f *.o *.bin *.elf *.dis
+	find . -name *.o | xargs rm -f {}
 	
