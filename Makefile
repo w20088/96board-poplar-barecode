@@ -8,9 +8,12 @@ CFLAGS 		:= -Wall -O2 -Iinclude
 CPPFLAGS   	:= -nostdinc -nostdlib -fno-builtin
 
 objs := start.o \
+        early_irq.o \
+        early_uart.o \
+        tail.o \
+        src/irq.o \
         src/serial_pl01x.o \
-        src/main.o \
-        tail.o
+        src/main.o
 
 fastboot.bin: $(objs)
 	${LD} -Tfastboot.lds -o fastboot.elf $^

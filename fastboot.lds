@@ -1,5 +1,5 @@
 SECTIONS {
-    . = 0x00000000;
+    . = 0x00C00000;
     .text : { *(.text) }
     __text_end = .;
     
