@@ -6,10 +6,8 @@
 @ *
 @******************************************************************************/
 
-#include <config.h>
+#define CONFIG_REG_SIZE				(0x2000)
 
-#ifndef CONFIG_NO_HEAD
-#ifdef CONFIG_UNIFIED_BOOT
 .section .tail,#alloc
 
 _checked_area_reserve:
@@ -39,57 +37,14 @@ _boot_sign_area:
 .globl reg_list_start
 reg_list_start:
 _boot_reg0:
-#ifdef BOOT_REG0
-	.incbin	BOOT_REG0
-#endif
+boot_reg0:
+	.incbin "bin/BOOT_0.reg"
+.= boot_reg0 + CONFIG_REG_SIZE
 
-.=_boot_reg0 + CONFIG_REG_SIZE
-_boot_reg1:
-#ifdef BOOT_REG1
-	.incbin	BOOT_REG1
-#endif
+boot_reg1:
+	.incbin	"bin/BOOT_1.reg"
+.= boot_reg1 + CONFIG_REG_SIZE
 
-.=_boot_reg1 + CONFIG_REG_SIZE
-_boot_reg2:
-#ifdef BOOT_REG2
-	.incbin	BOOT_REG2
-#endif
-
-.=_boot_reg2 + CONFIG_REG_SIZE
-_boot_reg3:
-#ifdef BOOT_REG3
-	.incbin	BOOT_REG3
-#endif
-
-.=_boot_reg3 + CONFIG_REG_SIZE
-_boot_reg4:
-#ifdef BOOT_REG4
-	.incbin	BOOT_REG4
-#endif
-
-.=_boot_reg4 + CONFIG_REG_SIZE
-_boot_reg5:
-#ifdef BOOT_REG5
-	.incbin	BOOT_REG5
-#endif
-
-.=_boot_reg5 + CONFIG_REG_SIZE
-_boot_reg6:
-#ifdef BOOT_REG6
-	.incbin	BOOT_REG6
-#endif
-
-.=_boot_reg6 + CONFIG_REG_SIZE
-_boot_reg7:
-#ifdef BOOT_REG7
-	.incbin	BOOT_REG7
-#endif
-
-.=_boot_reg7 + CONFIG_REG_SIZE
-reg_list_end:
-.globl _boot_end
-_boot_end:
-
-#endif
-#endif
-
+boot_reg2:
+	.incbin "bin/BOOT_2.reg"
+.= boot_reg2 + CONFIG_REG_SIZE

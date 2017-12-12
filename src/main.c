@@ -1,20 +1,22 @@
-extern int serial_init (void);
-extern void serial_puts (const char *s);
-extern void serial_putc (const char c);
-extern int serial_getc();
+#include <stdio.h>
 
+extern void uart_init(void *ptr);
+extern int uart_getc(void);
+extern void uart_putc(int);
 int main()
 {
     int c;
-
-    serial_init();
-    serial_puts("This is printed by serial_puts:\r\n\0");
-
+    uart_init(NULL);
+    printf("Hello World! %s\n", "The first printf");
     while(1)
     {
         // 从串口接收数据后，输出
-        c = serial_getc();
-        serial_putc((char)c);
+        c = getc();
+        if (c == '\r')
+        {
+            putc('\n');
+        }
+        putc(c);
     }
 
     return 0;
