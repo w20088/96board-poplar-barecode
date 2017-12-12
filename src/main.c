@@ -10,7 +10,6 @@ int main()
     printf("Hello World! %s\n", "The first printf");
     while(1)
     {
-        // 从串口接收数据后，输出
         c = getc();
         if (c == '\r')
         {
@@ -21,4 +20,3 @@ int main()
 
     return 0;
 }
-

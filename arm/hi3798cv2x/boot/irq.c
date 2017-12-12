@@ -16,57 +16,56 @@
  *
 ******************************************************************************/
 
-//#include <stdio.h>
-//#include <boot.h>
+#include <stdio.h>
+#include <boot.h>
 
 /*****************************************************************************/
-extern void uart_early_puts(const char * s);
 
 void do_undefined_instruction (void)
 {
-	uart_early_puts("undefined instruction\r\n");
-	uart_early_puts("Resetting CPU ...\r\n");
-	//reset_cpu (0);
+	early_puts("undefined instruction\r\n");
+	early_puts("Resetting CPU ...\r\n");
+	reset_cpu (0);
 }
 
 void do_software_interrupt (void)
 {
-	uart_early_puts("software interrupt\r\n");
-	uart_early_puts("Resetting CPU ...\r\n");
-	//reset_cpu (0);
+	early_puts("software interrupt\r\n");
+	early_puts("Resetting CPU ...\r\n");
+	reset_cpu (0);
 }
 
 void do_prefetch_abort (void)
 {
-	uart_early_puts("prefetch abort\r\n");
-	uart_early_puts("Resetting CPU ...\r\n");
-	//reset_cpu (0);
+	early_puts("prefetch abort\r\n");
+	early_puts("Resetting CPU ...\r\n");
+	reset_cpu (0);
 }
 
 void do_data_abort (void)
 {
-	uart_early_puts("data abort\r\n");
-	uart_early_puts("Resetting CPU ...\r\n");
-	//reset_cpu (0);
+	early_puts("data abort\r\n");
+	early_puts("Resetting CPU ...\r\n");
+	reset_cpu (0);
 }
 
 void do_not_used (void)
 {
-	uart_early_puts("not used\r\n");
-	uart_early_puts("Resetting CPU ...\r\n");
-	//reset_cpu (0);
+	early_puts("not used\r\n");
+	early_puts("Resetting CPU ...\r\n");
+	reset_cpu (0);
 }
 
 void do_fiq (void)
 {
-	uart_early_puts("fast interrupt request\r\n");
-	uart_early_puts("Resetting CPU ...\r\n");
-	//reset_cpu (0);
+	early_puts("fast interrupt request\r\n");
+	early_puts("Resetting CPU ...\r\n");
+	reset_cpu (0);
 }
 
 void do_irq (void)
 {
-	uart_early_puts("interrupt request\r\n");
-	uart_early_puts("Resetting CPU ...\r\n");
-	//reset_cpu (0);
+	early_puts("interrupt request\r\n");
+	early_puts("Resetting CPU ...\r\n");
+	reset_cpu (0);
 }

@@ -16,40 +16,15 @@
  *
 ******************************************************************************/
 
-#include <stddef.h>
-#include <console.h>
+#ifndef ASM_IO_H
+#define ASM_IO_H
 
-#define KEY_CTRL_C                     0x03
+#define readb(_a)        (*(volatile unsigned char *)(_a))
+#define readw(_a)        (*(volatile unsigned short *)(_a))
+#define readl(_a)        (*(volatile unsigned int *)(_a))
 
-static struct console *__current;
+#define writeb(_v, _a)   (*(volatile unsigned char *)(_a) = (_v))
+#define writew(_v, _a)   (*(volatile unsigned short *)(_a) = (_v))
+#define writel(_v, _a)   (*(volatile unsigned int *)(_a) = (_v))
 
-int getchar(void)
-{
-	return __current ? __current->getchar() : 0;
-}
-
-void putchar(int ch)
-{
-	if (__current)
-		__current->putchar(ch);
-}
-
-int tstchar(void)
-{
-	if (__current)
-		return __current->tstchar();
-	else
-		return 0;
-}
-
-int isbreak(void)
-{
-	if (!tstchar())
-		return 0;
-	return (getchar() == KEY_CTRL_C);
-}
-
-void console_init(struct console *console)
-{
-	__current = console;
-}
+#endif /* ASM_IO_H */

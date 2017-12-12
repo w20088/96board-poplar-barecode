@@ -53,7 +53,6 @@
 #define _YELLOW         _BEGIN frYELLOW _END
 
 #ifdef CONFIG_DEBUG
-#  include <trace.h>
 #  define ASSERT(_p) if (!(_p)) { \
 	printf("%s(%s,%d):assert:(%s)\n", __FILE__, __FUNCTION__, __LINE__, #_p); \
 	}

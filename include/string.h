@@ -42,6 +42,7 @@ unsigned long strtoul(const char *nptr, char **endptr, int base);
 uint64 strtoull(const char *nptr, char **endptr, int base);
 char *strncpy(char * dst, const char * src, size_t n);
 uint64 memparse(const char *ptr, char **retptr);
+char *strndup(const char *str, size_t n);
 char *strtok(char *s, const char *delim);
 
 #ifndef CONFIG_NO_UNSAFE_FUNCTION
@@ -50,6 +51,7 @@ void strcpy(char *dst, const char *src);
 void strcat(char *dst, const char *src);
 char *strncat(char *dst, const char *src, size_t n);
 char *strchr(const char *s, char ch);
+char *strdup(const char *s);
 size_t strlen(const char *s);
 char *strstr(const char *s1, const char *s2);
 #endif /* CONFIG_NO_UNSAFE_FUNCTION */
