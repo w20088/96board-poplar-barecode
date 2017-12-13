@@ -16,10 +16,4 @@
 #
 ################################################################################
 
-#SRCS-$(CONFIG_CMDLINE) += cmdline/
-
-SRCS-y += libc/
-SRCS-$(CONFIG_UART) += console.c
-SRCS-y += bits.c modules.c match.c malloc.c memlib.c \
-	task.c malloc_dev.c malloc_res.c hush.c
-
+SRCS-y += gic_v10.c

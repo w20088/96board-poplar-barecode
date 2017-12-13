@@ -7,4 +7,8 @@
 ################################################################################
 
 SRCS-$(CONFIG_UART) += uart/
+SRCS-y += timer/
+#SRCS-y += flash/
+SRCS-y += irq/
+#SRCS-$(CONFIG_GENERIC_USB) += usb/
 

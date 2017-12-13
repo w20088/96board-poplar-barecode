@@ -2,7 +2,7 @@
  *    Copyright (C) 2014 Hisilicon STB Development Dept
  *    All rights reserved.
  * ***
- *    Create by Cai Zhiyong
+ *    Create by Czyong
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,31 +16,42 @@
  *
 ******************************************************************************/
 
-#include <early_uart.h>
-#include <asm/io.h>
-#include <boot.h>
 #include <stdio.h>
-#include <string.h>
-#include <trace.h>
-#include <cpuinfo.h>
+#include <delay.h>
+#include <command.h>
+#include <cmd-words.h>
 
-int arm_start(void)
+/*****************************************************************************/
+
+static unsigned int tick_value = 0;
+
+static int do_show_timer(struct cmd_t *cmd)
 {
-	char *str = NULL;
+	unsigned int sec, msec, usec;
+	unsigned int this_tick = get_ticks();
 
-	early_printf( "\r\n\r\nminiboot %d.%d.%d (%s@%s) (%s %s)\r\n\r\n",
-		VERSION, PATCHLEVEL, SUBLEVEL,
-		USER, HOSTNAME, __TIME__, __DATE__);
+	if (tick_value <= this_tick)
+		usec = this_tick - tick_value;
+	else
+		usec = 0xFFFFFFFF - tick_value + this_tick;
 
-	early_printf("CPU:          %s\r\n", get_cpu_name());
-	get_bootmedia(&str, NULL);
-	early_printf("Boot Media:   %s\r\n", str);
-	early_printf("DDR Size:     %s\r\n", u64tohstr(get_ddr_size(), "B"));
-	early_printf("\r\n");
+	msec = usec / 1000;
+	usec = usec % 1000;
+	sec = msec / 1000;
+	msec = msec % 1000;
 
-	symbol_init();
-
-	boot_start();
+	printf("%u.%u.%u\n", sec, msec, usec);
 
 	return 0;
 }
+CMD({&cw_show, NULL},
+    {&cw_timer, _T("show current timer value"), do_show_timer})
+
+static int do_reset_timer(struct cmd_t *cmd)
+{
+	tick_value = get_ticks();
+
+	return 0;
+}
+CMD({&cw_reset, NULL},
+    {&cw_timer, _T("Reset timer value to 0"), do_reset_timer})

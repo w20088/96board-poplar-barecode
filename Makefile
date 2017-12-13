@@ -102,7 +102,7 @@ endif
 PLATFORMLDS := arm/$(PLATFORM)/boot/platform.lds
 export LINKLDS PLATFORMLDS
 
-LIBS        := arm/ libs/ drivers/
+LIBS        := arm/ libs/ drivers/ common/
 ZLIBS       := arm/lib/compiler/
 
 LIBS  := $(addsuffix $(BUILDOBJ).o,$(addprefix $(TOPDIR)/,$(LIBS)))

@@ -15,5 +15,6 @@
 #  limitations under the License.
 #
 ################################################################################
-
+SRCS-y += ddrsize.c cpu.c mmu.c
+SRCS-$(CONFIG_CACHE_ARMV7) += cache_v7.S
 SRCS-y += compiler/

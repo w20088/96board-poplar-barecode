@@ -10,7 +10,7 @@ CFLAGS += -Wall -Wstrict-prototypes -fno-stack-protector
 
 SRCS-y := start.S early_irq.S
 
-SRCS-y += early_uart.S tail.S irq.c chip.c
+SRCS-y += early_uart.S tail.S irq.c chip.c cpu.c
 
 TEMPS   += $(TOPDIR)/.init.reg
 

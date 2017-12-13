@@ -16,10 +16,13 @@
 #
 ################################################################################
 
-#SRCS-$(CONFIG_CMDLINE) += cmdline/
+#SRCS-$(CONFIG_CMDLINE) += cmd_system.c cmd_memory.c cmd_run.c cmd-words.c \
+	cmd_env_set.c startcmd.c cmd_getinfo.c cmd_xmodem.c
 
-SRCS-y += libc/
-SRCS-$(CONFIG_UART) += console.c
-SRCS-y += bits.c modules.c match.c malloc.c memlib.c \
-	task.c malloc_dev.c malloc_res.c hush.c
+#SRCS-y += env_set.c run.c kern_tags.c reboot.c dump_hex.c xmodem.c bootstrap.c \
+	init.c  kern_param.c mem_init.c
+SRCS-y +=  reboot.c dump_hex.c init.c mem_init.c
+#SRCS-$(CONFIG_BOOTARGS_MERGE) += params.c
+#SRCS-$(CONFIG_SECURE_BOOT_SUPPORT) += loadsecureimg.c
 
+#SRCS-$(CONFIG_ARCH_HI3798CV2X) += board_hi3798cv2x.c

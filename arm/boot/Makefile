@@ -17,4 +17,6 @@
 ################################################################################
 
 # force compiling for update data and time
+SRCS-y := irq.c irq_handle.S trace.c backtracking.S
 FORCE-y += boot.c
+
