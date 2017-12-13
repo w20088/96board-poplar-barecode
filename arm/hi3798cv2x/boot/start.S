@@ -345,7 +345,7 @@ clear_bss_loop:
 	ldr	pc, _arm_start  @ jump to C code
 _halt:
 	b _halt
-_arm_start: .word main
+_arm_start: .word arm_start
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @

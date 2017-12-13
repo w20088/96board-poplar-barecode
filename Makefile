@@ -102,10 +102,8 @@ endif
 PLATFORMLDS := arm/$(PLATFORM)/boot/platform.lds
 export LINKLDS PLATFORMLDS
 
-#LIBS        := arm/ libs/ drivers/
-LIBS        := src/
-#ZLIBS       := arm/lib/compiler/
-ZLIBS       :=
+LIBS        := arm/ libs/ drivers/
+ZLIBS       := arm/lib/compiler/
 
 LIBS  := $(addsuffix $(BUILDOBJ).o,$(addprefix $(TOPDIR)/,$(LIBS)))
 ZLIBS := $(addsuffix $(BUILDOBJ).o,$(addprefix $(TOPDIR)/,$(ZLIBS)))
