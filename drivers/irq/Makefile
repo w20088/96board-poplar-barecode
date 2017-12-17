@@ -16,6 +16,4 @@
 #
 ################################################################################
 
-# force compiling for update data and time
-SRCS-y := irq.c irq_handle.S
-FORCE-y += boot.c 
+SRCS-y += gic_v10.c
