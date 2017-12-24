@@ -150,12 +150,23 @@ void clock_tick_init(int timer)
 		 TIMERx_CONTROL);
 }
 /*****************************************************************************/
+static BOOL isLedOn = TRUE;
+#define GPIO5_DIR      (*(volatile unsigned long *)0xF8004400)
+#define GPIO5_3_DATA      (*(volatile unsigned long *)(0xF8004000 + (4L<<3))) //LED D15 blue for bluetooth
 
 static void clock_source_irq_handle(void *arg)
 {
 	struct timer_ctrl_t *tmr = (struct timer_ctrl_t *)arg;
 	TM_WRITE(tmr, 1, TIMERx_INTR_CLR);
-        printf("timer irq:%d happened!\n", tmr->irqnr);
+        GPIO5_DIR = GPIO5_DIR | (1L<<3);    // 设置gpio5-3为输出口
+        if(isLedOn) {
+            GPIO5_3_DATA =  (GPIO5_3_DATA | (1L<<3));    // gpio5-1输出1，LED D15灭
+            isLedOn = FALSE;
+        } else
+        {
+            GPIO5_3_DATA =  GPIO5_3_DATA & (~(1L<<3));    // gpio5-1输出0，LED D15点亮
+            isLedOn = TRUE;
+        }
 	//task_loop();
 }
 /*****************************************************************************/

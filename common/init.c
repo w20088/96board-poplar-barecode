@@ -35,6 +35,7 @@
 #include <debug.h>
 #include <board.h>
 #include <params.h>
+#include <mmc_if.h>
 
 #define FIVE_SECONDS               5000
 
@@ -67,8 +68,9 @@ int boot_start(void)
 	//task_init(CONFIG_MAX_TASK);
 
 	//kern_param_init();
-
+        printf("begin module_init()...\n");
 	module_init();
+        printf("end module_init()...\n");
 
 #if (defined(CONFIG_BOOTROM_SUPPORT) || defined(CONFIG_BOOTROM_CA_SUPPORT))
 	//start_bootstrap(NULL);
@@ -106,6 +108,18 @@ int boot_start(void)
 
 	reset_cpu(0);
 */
+
+//<Part Sel="1" PartitionName="kernel" FlashType="emmc" FileSystem="none" Start="150M" Length="40M" SelectFile="kernel.img"/>
+
+    int64 ret = 0;
+    uint32 kernel_addr = 0x06000000;
+    printf("before mmcdev_read()...\n");;
+    dump_hex(kernel_addr, (char *)kernel_addr, 512, sizeof(int));
+    ret = mmcdev_read((uint64)150*1024*1024, (char *)kernel_addr, (uint64)40*1024*1024);
+    printf("%llu bytes read: %s\n",
+        ret , (ret  == 40*1024*1024) ? "OK" : "ERROR");
+    printf("after mmcdev_read()...\n");
+    dump_hex(kernel_addr, (char *)kernel_addr, 512, sizeof(int));
 
     unsigned long i=0;
     while(1)

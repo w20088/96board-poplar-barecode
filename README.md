@@ -1,4 +1,4 @@
 # 96board-poplar-barecode
 
-verify memory irq timer functions
+support emmc read/write functions.
 
