@@ -18,7 +18,7 @@
 
 CFLAGS += -I$(SRCDIR)../
 
-SRCS-y := himciv200.c mmc_drv.c mmc_if.c
+SRCS-y := himciv200.c mmc_drv.c mmc_if.c mmc_unif.c
 #SRCS-$(CONFIG_CMDLINE) += cmd_mmc.c
 #unsparse.c
 

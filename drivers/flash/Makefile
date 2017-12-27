@@ -28,5 +28,5 @@
 SRCS-$(CONFIG_GENERIC_MMC)                    += mmc/
 #SRCS-$(CONFIG_GENERIC_HIFMC100)               += hifmc100/
 
-#SRCS-y += flash.c flash_gen.c parts.c find_parts.c
+SRCS-y += flash.c flash_gen.c parts.c find_parts.c
 

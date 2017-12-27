@@ -36,6 +36,7 @@
 #include <board.h>
 #include <params.h>
 #include <mmc_if.h>
+#include <run.h>
 
 #define FIVE_SECONDS               5000
 
@@ -67,17 +68,15 @@ int boot_start(void)
 
 	//task_init(CONFIG_MAX_TASK);
 
-	//kern_param_init();
-        printf("begin module_init()...\n");
+	kern_param_init();
 	module_init();
-        printf("end module_init()...\n");
 
 #if (defined(CONFIG_BOOTROM_SUPPORT) || defined(CONFIG_BOOTROM_CA_SUPPORT))
-	//start_bootstrap(NULL);
+	start_bootstrap(NULL);
 #endif
 
 	cpu_enable_irq();
-/*
+
 #ifdef CONFIG_NET
 	eth_config_init();
 #endif
@@ -86,12 +85,12 @@ int boot_start(void)
 	bootargs_prepare();
 #endif
 
-	app_init();
+	//app_init();
 
-	test_init();
+	//test_init();
 
 #ifdef CONFIG_PRODUCT_WITH_BOOT
-	fastapp_entry(0, NULL);
+	//fastapp_entry(0, NULL);
 #endif
 
 	resmem_dump(
@@ -103,31 +102,19 @@ int boot_start(void)
 	);
 
 #ifdef CONFIG_CMDLINE
-	start_cmdline();
+	//start_cmdline();
 #endif
 
-	reset_cpu(0);
-*/
+	//reset_cpu(0);
+
 
 //<Part Sel="1" PartitionName="kernel" FlashType="emmc" FileSystem="none" Start="150M" Length="40M" SelectFile="kernel.img"/>
 
     int64 ret = 0;
-    uint32 kernel_addr = 0x06000000;
-    printf("before mmcdev_read()...\n");;
-    dump_hex(kernel_addr, (char *)kernel_addr, 512, sizeof(int));
+    uint32 kernel_addr = 0x02000000;
     ret = mmcdev_read((uint64)150*1024*1024, (char *)kernel_addr, (uint64)40*1024*1024);
     printf("%llu bytes read: %s\n",
         ret , (ret  == 40*1024*1024) ? "OK" : "ERROR");
-    printf("after mmcdev_read()...\n");
-    dump_hex(kernel_addr, (char *)kernel_addr, 512, sizeof(int));
-
-    unsigned long i=0;
-    while(1)
-    {
-        printf("%lds\r", i);
-        mdelay(1000);
-        i++;
-
-    }
-	return 0;
+    kern_load((char *)kernel_addr);
+    return 0;
 }
