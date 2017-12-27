@@ -10,6 +10,16 @@ led_on_c branch演示用c程序点亮板上的6个LED灯，并使其闪烁
 
 uart branch演示用c语言接收和发送串口输入和输出
 
+printf branch 演示格式化打印输出
+
+timer branch演示如何计时
+
+irq branch演示如何设置中断向量以及实现了定时器中断和GPIO中断
+
+emmc branch演示如何对EMMC进行读写操作，并将boot.img读入内存
+
+miniboot 演示如何读取环境变量及引导andorid linux kernel
+
 编译工具：
 wget https://releases.linaro.org/components/toolchain/binaries/7.1-2017.08/arm-linux-gnueabi/gcc-linaro-7.1.1-2017.08-x86_64_arm-linux-gnueabi.tar.xz
 
