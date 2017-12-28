@@ -82,7 +82,7 @@ char *get_debug_type_string(int type)
 static unsigned int retry_count = MAX_RETRY_COUNT;
 
 #ifdef CONFIG_GENERIC_MMC
-//extern unsigned int emmc_offline;
+extern unsigned int emmc_offline;
 #endif
 
 #define MAX_DMA_DES	20480
@@ -1077,7 +1077,7 @@ struct mmc_dev_t *mmc_flash_init(void)
 	}
 
 #ifdef CONFIG_GENERIC_MMC
-//	emmc_offline = 0;
+	emmc_offline = 0;
 #endif
 
 	print_mmcinfo(mmc_dev);
