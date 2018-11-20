@@ -12,12 +12,14 @@ fastboot.bin: l-loader
 	$(OBJCOPY) -O binary $< $@
 	${OBJDUMP} -D -m arm $< > l-loader.dis
 
-l-loader: start.o l-loader.lds
-	$(LD) -Bstatic -Tl-loader.lds start.o -o $@
+l-loader: start.o uart.o l-loader.lds
+	$(LD) -Bstatic -Tl-loader.lds start.o uart.o -o $@
 
 start.o: start.S
-	$(CC) -c -o $@ $< \
-		$(CFLAGS)
+	$(CC) -c -o $@ $< $(CFLAGS)
+
+uart.o: uart.S
+	$(CC) -c -o $@ $< $(CFLAGS)
 
 l-loader.lds: l-loader.ld.in
 	$(CPP) -P -o $@ - < $< $(CFLAGS)

@@ -1,7 +1,9 @@
+#define STACK_TOP                               (0xFFFF0C00)
 
 #define REG_BASE_SCTL                           (0xF8000000)
 #define REG_SC_GEN1                             (0x0084)
-
+#define CONFIG_GPIO_LIGHT_SET                   (0x29)
+#define REG_BASE_GPIO5                          (0xF8004000)
 
 #define LLOADER_TEXT_BASE                       (0x02000000)
 #define CONFIG_AUXAREA_ADR_POS			(0x214)
@@ -160,8 +162,104 @@ wait_mux_finish:
 	cmp	r1, r2
 	bne	wait_mux_finish
 
+normal_start_flow:
+        /* set the cpu to SVC32 mode */
+        mrs     r0, cpsr
+        bic     r0, r0, #0x1f  /* r0 = ((~0x1F) & r0) */
+        orr     r0, r0, #0xd3  /* r0 = (0xd3 | r0)    */
+        msr     cpsr, r0
+
+        /* Enable SMP mode for CPU0, by setting bit 6 of CPU Extend Ctl reg */
+        mrrc    p15,1,r0,r1,c15
+        orr     r0, r0, #(1 << 6)
+        mcrr    p15,1,r0,r1,c15
+
+        bl      flash_cache_all
+
+main_cpu:
+        /* init serial and printf a string. */
+        bl      uart_early_init
+        bl      msg_main_cpu_startup
+
+
+        ldr     sp, =STACK_TOP
+
+        /* enable I-Cache now */
+        mrc     p15, 0, r0, c1, c0, 0
+        orr     r0, r0, #0x00001000     /* set bit 12 (I) I-Cache */
+        mcr     p15, 0, r0, c1, c0, 0
+        isb     @ add ISB or I-cache enabled is  not efficient right now
+
+enable_green_light:
+        mov     r0, #CONFIG_GPIO_LIGHT_SET  /* GPIO group num * 8 + GPIO bit num */
+        sub     r0, r0, #40
+        ldr     r1, =REG_BASE_GPIO5 /* GPIO5 will no power off when suspending */
+        ldr     r2, [r1, #0x400]
+        mov     r3, #0x1
+        orr     r2, r3, LSL r0
+        str     r2, [r1, #0x400]
+        mov     r2, #0
+        mov     r3, #0x4
+        mov     r3, r3, LSL r0
+        str     r2, [r1, r3]
+
 panic:
 	b	panic
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@
+@  corrupt: r0, r1, r2, r3
+@
+.align  2
+flash_cache_all:
+
+        /* disable MMU stuff and caches */
+        mrc     p15, 0, r0, c1, c0, 0
+        orr     r0, r0, #0x00002000      /* clear bits 13 (--V-)   */
+        bic     r0, r0, #0x00000007      /* clear bits 2:0 (-CAM)  */
+        orr     r0, r0, #0x00000002      /* set bit 1 (--A-) Align */
+        orr     r0, r0, #0x00000800      /* set bit 12 (Z---) BTB  */
+        mcr     p15, 0, r0, c1, c0, 0
+
+        /*
+         * Invalidate L1 I/D
+         */
+        mov     r0, #0                   /* set up for MCR */
+        mcr     p15, 0, r0, c8, c7, 0    /* invalidate TLBs */
+        mcr     p15, 0, r0, c7, c5, 0    /* invalidate icache */
+
+        /* Invalidate L1 D-cache */
+        mcr     p15, 2, r0, c0, c0, 0    /* select L1 data cache */
+        mrc     p15, 1, r3, c0, c0, 0    /* Read Current Cache Size Identification Register */
+        ldr     r1, =0x1ff
+        and     r3, r1, r3, LSR #13      /* r3 = (number of sets -1) */
+        mov     r0, #0
+way_loop:
+        mov     r1, #0                  /* r1->set counter */
+line_loop:
+        mov     r2, r0, LSL #30
+        orr     r2, r1, LSL #5           /* r2->set/way cache-op format */
+        mcr     p15, 0, r2, c7, c6, 2    /* Invalidate line described by r2 */
+        add     r1, r1, #1               /* Increment set counter */
+        cmp     r1, r3                   /* Check if the last set is reached... */
+        ble     line_loop                /* if not, continue the set_loop */
+        add     r0, r0, #1               /* else, Increment way counter */
+        cmp     r0, #4                   /* Check if the last way is reached... */
+        blt     way_loop                 /* if not, continue the way_loop */
+
+        mov     pc, lr
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.align  2
+msg_main_cpu_startup:
+        mov     r5, lr
+        add     r0, pc, #4
+        bl      uart_early_puts
+        mov     pc, r5
+L10:
+        .ascii "\r\n\r\nSystem startup\r\n\0"
 
 .section .tail,#alloc
 
