@@ -1,3 +1,5 @@
+#include "poplar.h"
+
 #define STACK_TOP                               (0xFFFF0C00)
 
 #define REG_BASE_SCTL                           (0xF8000000)
@@ -5,7 +7,6 @@
 #define CONFIG_GPIO_LIGHT_SET                   (0x29)
 #define REG_BASE_GPIO5                          (0xF8004000)
 
-#define LLOADER_TEXT_BASE                       (0x02000000)
 #define CONFIG_AUXAREA_ADR_POS			(0x214)
 #define CONFIG_AUXAREA_LEN_POS			(0x218)
 #define CONFIG_BOOT_ENTRY_POS			(0x21C)
@@ -36,6 +37,9 @@
 #define CONFIG_BOOT_STORE_ADDR_VAL		(LLOADER_TEXT_BASE)
 
 #define CONFIG_REG_SIZE				(0x2000)
+
+#define BOOT_MSG   "\nLOADER:  CPU0 executes at 0x"
+
 
 .global start
 start:
@@ -203,6 +207,16 @@ enable_green_light:
         mov     r3, r3, LSL r0
         str     r2, [r1, r3]
 
+        /*display pc value*/
+        adr     r0, str_bootmsg
+        bl      uart_early_puts
+        mov     r0, pc
+        bl      uart_early_put_hex
+        mov     r0, #'\n'
+        bl      uart_early_putc
+        mov     r0, #'\n'
+        bl      uart_early_putc
+
 panic:
 	b	panic
 
@@ -260,6 +274,10 @@ msg_main_cpu_startup:
         mov     pc, r5
 L10:
         .ascii "\r\n\r\nSystem startup\r\n\0"
+
+.align	2
+str_bootmsg:
+        .asciz  BOOT_MSG
 
 .section .tail,#alloc
 
