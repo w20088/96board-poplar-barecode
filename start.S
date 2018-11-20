@@ -1,0 +1,187 @@
+
+#define REG_BASE_SCTL                           (0xF8000000)
+#define REG_SC_GEN1                             (0x0084)
+
+
+#define LLOADER_TEXT_BASE                       (0x02000000)
+#define CONFIG_AUXAREA_ADR_POS			(0x214)
+#define CONFIG_AUXAREA_LEN_POS			(0x218)
+#define CONFIG_BOOT_ENTRY_POS			(0x21C)
+#define CONFIG_SCS_HASHED_AREA_LEN_POS		(0x404)
+#define CONFIG_TOTAL_BOOT_AREA_LEN_POS		(0x408)
+#define CONFIG_DEFAULT_BOOT_REG_POS		(0x480)
+#define CONFIG_PARAM_AREA_POS			(0x400)
+#define CONFIG_SCS_HASHED_AREA_OFF_POS		(0x400)
+#define CONFIG_PARAM_AREA_SIG_POS		(0x2EC0)
+#define CONFIG_SUPPORT_MULTI_PARAM_POS		(0x2FE0)
+#define CONFIG_AUXCODE_AREA_POS			(0x3000)
+#define CONFIG_CHECKED_AREA_START		(0x6500)
+
+#define CONFIG_UNCHK_SIZE			(0x100)
+#define CONFIG_SCS_HASHED_AREA_OFF_VAL		(0x100)
+#define CONFIG_AUXAREA_LEN			(0x3400)
+
+#define CONFIG_BOOT_FLAG_POS			(0x2FC4)
+#define CONFIG_BOOT_FLAG_VAL			(0x435A590D)
+
+#define CONFIG_AUX_ENC_FLAG_POS			(0x2FC8)
+#define CONFIG_AUX_ENC_FLAG_VAL			(0x2A13C812)
+
+#define CONFIG_PARAM_START_ADDR_POS		(0x2FE4)
+#define CONFIG_PARAM_ITEM_LEN_POS		(0x2FE8)
+
+#define CONFIG_BOOT_STORE_ADDR_POS		(0x2FEC)
+#define CONFIG_BOOT_STORE_ADDR_VAL		(LLOADER_TEXT_BASE)
+
+#define CONFIG_REG_SIZE				(0x2000)
+
+.global start
+start:
+	b _checked_area_start
+/*
+ * +--------------------------------------------+
+ * | 1. Head Area (Key and Param)		|
+ * +--------------------------------------------+
+ */
+.=CONFIG_AUXAREA_ADR_POS
+	.word _auxcode_start-LLOADER_TEXT_BASE
+
+.=CONFIG_AUXAREA_LEN_POS
+	.word CONFIG_AUXAREA_LEN
+
+.=CONFIG_BOOT_ENTRY_POS
+	.word _checked_area_start
+/*
+ * +--------------------------------------------+
+ * | 2. Param Area				|
+ * +--------------------------------------------+
+ */
+.=CONFIG_PARAM_AREA_POS
+
+.=CONFIG_SCS_HASHED_AREA_OFF_POS
+	.word CONFIG_SCS_HASHED_AREA_OFF_VAL
+
+.=CONFIG_SCS_HASHED_AREA_LEN_POS
+	.word _checked_area_end - _checked_area_start
+
+.=CONFIG_TOTAL_BOOT_AREA_LEN_POS
+	.word _total_boot_area_end - _total_boot_area_start
+
+.=CONFIG_DEFAULT_BOOT_REG_POS
+	.incbin	"bin/BOOT_0.reg"
+
+/* 2.5 Param signature */
+.=CONFIG_PARAM_AREA_SIG_POS
+	.fill 0x100,1,0
+
+/*
+ * +--------------------------------------------+
+ * | 3. Unchecked area for hisi			|
+ * +--------------------------------------------+
+ */
+
+/* 3.2 Boot flag */
+.=CONFIG_BOOT_FLAG_POS
+	.word CONFIG_BOOT_FLAG_VAL
+
+.=CONFIG_AUX_ENC_FLAG_POS
+	.word CONFIG_AUX_ENC_FLAG_VAL
+
+.=CONFIG_SUPPORT_MULTI_PARAM_POS
+	.word 0x1
+
+.=CONFIG_PARAM_START_ADDR_POS
+	.word reg_list_start-LLOADER_TEXT_BASE
+
+/* 3.6 param item length */
+.=CONFIG_PARAM_ITEM_LEN_POS
+	.word CONFIG_REG_SIZE
+
+.=CONFIG_BOOT_STORE_ADDR_POS
+	.word CONFIG_BOOT_STORE_ADDR_VAL
+/*
+ * +--------------------------------------------+
+ * | 4. Auxiliary Code Area			|
+ * +--------------------------------------------+
+ */
+.=CONFIG_AUXCODE_AREA_POS
+_auxcode_start:
+	.incbin   "bin/AUXCODE.img"
+	.align	8
+_auxcode_end:
+ .=CONFIG_AUXCODE_AREA_POS + CONFIG_AUXAREA_LEN
+
+/*
+ * +--------------------------------------------+
+ * | 5. Unchecked Area				|
+ * +--------------------------------------------+
+ */
+_total_boot_area_start:
+	.fill CONFIG_UNCHK_SIZE,1,0
+
+/*
+ * +--------------------------------------------+
+ * | 6. Checked Area (fastboot)			|
+ * +--------------------------------------------+
+ */
+.=CONFIG_CHECKED_AREA_START
+_checked_area_start:
+	b	reset
+/*
+ * +--------------------------------------------+
+ * | 7. AUX code register files			|
+ * +--------------------------------------------+
+ */
+.align	9
+reg_list_start:
+boot_reg0:
+	.incbin "bin/BOOT_0.reg"
+.= boot_reg0 + CONFIG_REG_SIZE
+
+boot_reg1:
+	.incbin	"bin/BOOT_1.reg"
+.= boot_reg1 + CONFIG_REG_SIZE
+
+boot_reg2:
+	.incbin "bin/BOOT_2.reg"
+.= boot_reg2 + CONFIG_REG_SIZE
+reg_list_end:
+.align	8
+
+reset:
+	isb
+
+	/* loop until the system is ready; REG_SC_GEN1 is 0 at power-on  */
+	ldr	r0, =REG_BASE_SCTL
+	mov	r1, #1
+wait_mux_finish:
+	str	r1, [r0, #REG_SC_GEN1]
+	ldr	r2, [r0, #REG_SC_GEN1]
+	cmp	r1, r2
+	bne	wait_mux_finish
+
+panic:
+	b	panic
+
+.section .tail,#alloc
+
+_checked_area_reserve:
+	.fill 0x10,1,0
+
+.align	8
+_checked_area_end:
+
+/*
+ * +--------------------------------------------+
+ * | 10. Boot Signature				|
+ * +--------------------------------------------+
+ */
+_boot_sign_area:
+	.fill 0x100,1,0
+_total_boot_area_end:
+
+
+.global _boot_end
+_boot_end:
+
+
